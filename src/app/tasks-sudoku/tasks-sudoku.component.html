@@ -1,0 +1,18 @@
+<ion-content >
+
+      <ion-title size="large">tasks-sudoku</ion-title>
+      bestTime: {{listTasks.bestTime}}
+    <div *ngFor="let task of listTasks.tasks">      
+      <ion-button  id="click-trigger">{{task.status}}</ion-button>
+      <ion-popover trigger="click-trigger" triggerAction="click" >
+        <ng-template>
+          <ion-content class="ion-padding">            
+            <div>bestTime:{{task.bestTime}}</div>
+            <div>status:{{task.status}}</div>
+            <ion-button  (click)="setTask(task.idTask)">Играть</ion-button>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </div>
+
+</ion-content>

@@ -9,9 +9,43 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
+      <ion-title size="large">!!!Tab 1</ion-title>
     </ion-toolbar>
   </ion-header>
+<!-- ИГРОВОЕ ПОЛЕ -->
+  <!-- <playing-field></playing-field> -->
+  <!-- <list-of-levels></list-of-levels> -->
+  <tasks-sudoku></tasks-sudoku>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+  <!-- СТАРАЯ ВЕРСИЯ -->
+  <!-- <ion-button (click)="presentPopover($event)">Click Me</ion-button>
+  !!!
+  <form [formGroup]="form">
+    <div  formArrayName="sudoky" class="square-general square">
+      <div *ngFor="let arr of getFormsArray(); let i = index" formArrayName="{{i}}" class="square">
+        <div *ngFor="let item of getFormsArray(arr); let j = index" class="height">
+          <ng-container *ngIf="isControl(item)">
+            <ion-input  value="{{j}}" formControlName="{{j}}"></ion-input>
+          </ng-container>
+          <ng-container *ngIf="!isControl(item)">
+            <div class="square">
+              <div *ngFor="let mark of getFormsArray(item); let k = index" formArrayName="{{j}}" >
+                <ion-input  value="{{k}}" formControlName="{{k}}" class="mark"></ion-input>
+              </div>
+            </div>
+          </ng-container>
+         </div>
+      </div>
+    </div>
+  </form> -->
+
+
+  <!-- ненужно - примеры компонентов -->
+  <!-- <ion-item>
+    <ion-label>Username</ion-label>
+    <ion-input type="text" [value]="username" [(ngModel)]="username"></ion-input>
+  </ion-item> -->
+  <!-- <ion-list></ion-list> -->
+
+  <!-- <app-explore-container name="Tab 1 page"></app-explore-container> -->
 </ion-content>
