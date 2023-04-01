@@ -1,70 +1,59 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-
-
-export enum ListStatusTasks {
-  finished="Закончен",
-  pause="Пауза",
-  new="Новый",
-}
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { NavController, NavParams } from '@ionic/angular';
+import { ListStatusTasks } from '../interface/list-status-tasks.enum';
+import { TaskLevels } from '../interface/tasks.interface';
+import { SudokuService } from '../service/sudoku.service';
 
 @Component({
   selector: 'tasks-sudoku',
   templateUrl: 'tasks-sudoku.component.html',
-  styleUrls: ['tasks-sudoku.component.scss']
+  styleUrls: ['tasks-sudoku.component.scss'],
 })
-export class TasksSudokuComponent implements OnDestroy,OnInit {
+export class TasksSudokuComponent implements OnInit {
   
+  private idLevel:string;
 
-  // public arrayNumber= [1,2,3,4,5,6,7,8,9 ];
-  public listTasks=
-    {
-      id:1,
-      bestTime:'15',
-      tasks:[
-        {
-          idTask:'1',//задача
-          idSolution:'1',//решение
-          idAnswer:'1',//ответ
-          bestTime:'15-1',
-          allTime:['11','12'],
-          status:ListStatusTasks.new
-        },
-        {
-          idTask:'2',
-          idSolution:'2',
-          idAnswer:'2',
-          bestTime:'15-2',
-          allTime:['11','12'],
-          status:ListStatusTasks.new
-        },
-        {
-          idTask:'3',
-          idSolution:'3',
-          idAnswer:'3',
-          bestTime:'15-3',
-          allTime:['11','12'],
-          status:ListStatusTasks.new
-        }
-      ]
-    };
-  
+  @ViewChild('popover') popover;
 
-  constructor() {
-    }
+  public isOpen = false;
+  public taskPopover=null;
+  public listTasks:TaskLevels=null;
+  public ListStatusTasks=ListStatusTasks;
+
+  public get defaultHref():string{    
+    return `/`;
+  }
   
-  public ngOnInit(){
-    console.log('OnInit tasks-sudoku');
+  constructor(public navCtrl: NavController, private activatedRoute: ActivatedRoute,private sudokuService:SudokuService) {}
+
+  public ngOnInit(){  
+    this.listTasks=null;
+    this.idLevel=this.activatedRoute.snapshot.paramMap.get('idLevel');
+    setTimeout(()=>this.getListTask(),1000);   
   }
 
-  public ngOnDestroy(){
-    console.log('ngOnDestroy tasks-sudoku');
+  private getListTask():void{
+    this.sudokuService.getListTaskByIdLevel(this.idLevel).subscribe(value=>{      
+      this.listTasks=value;
+    });
   }
 
-  public setTask(idTask):void{
-    console.log('setTask idTask: ',idTask)
+  public setTask(idTask):void{    
+    this.isOpen = false;
+    setTimeout(() => {      
+      this.navCtrl.navigateRoot([`/tasks/${this.idLevel}`,idTask]);
+    }, 0);    
   }
-  // public clickButton(num):void{
-  //   console.log('num: ',num)
-  // }
+
+  public presentPopover(idTask:string,e: Event) {    
+    this.taskPopover=this.gitTaskById(idTask);
+    this.popover.event = e;
+    this.isOpen = true;
+  }
+
+  public gitTaskById(idTask):any{
+    return this.listTasks.tasks.find(task=>task.idTask===idTask);
+  }
 
 }

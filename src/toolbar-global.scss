@@ -1,0 +1,12 @@
+ion-toolbar{
+  display: flex;
+
+  ion-buttons {
+    width: min-content;
+    display: inline-block;
+  }
+  ion-title{
+    display: inline-block;
+    color:#0c347b;
+  } 
+}

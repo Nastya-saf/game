@@ -1,37 +1,26 @@
+@import 'src/toolbar-global.scss';
 
-//TODO: нужно делать на гридах
-.square {
-    border: 1px solid royalblue;
-    // flex-basis: auto;
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    grid-template-rows: repeat(3,1fr);
-    &-general {
-        width: 100vw;
-        height: 100vw;
-        border: 2px solid rgb(5, 131, 33);
+.list-tasks{
+    display: flex;
+
+    &__item{
+        width: min-content;
+        margin: 2%;
     }
 }
 
-ion-input{
-    width: 100%;
-    border: 1px solid red;
-    height: 100%;
-    // width: 5px;
-    // height: 5px;
+.color-pause{    
+    color: rgb(253, 144, 2);
 }
 
-// .height{
-//     height: 80%;
-// }
-.sc-ion-input-md-h{
-    padding: 0;
+.color-finished{
+    color:green;
 }
 
-input{
-    width: 100%;
-}
-
-.mark{
-    border: 1ps solid rgb(255, 0, 200);
+.padding-title{
+    margin-bottom: 10px;
+    margin-left: 3px;
+    color:#0c347b;
+    font-weight: bold;
+    font-size: 20px;
 }

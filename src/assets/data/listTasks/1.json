@@ -1,0 +1,25 @@
+{
+  "data":{
+    "idLevel":"1",
+    "tasks":[
+      {
+        "idTask":"1",
+        "idSolution":null,
+        "idAnswer":"1",
+        "status":"new"
+      },
+      {
+        "idTask":"2",
+        "idSolution":null,
+        "idAnswer":"2",
+        "status":"new"
+      },
+      {
+        "idTask":"3",
+        "idSolution":null,
+        "idAnswer":"3",
+        "status":"new"
+      }
+    ]
+  }
+}

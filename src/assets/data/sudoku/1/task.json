@@ -1,0 +1,46 @@
+{
+  "data":[
+    {
+      "id": "1",
+      "sudoku":[
+        [null,2,7,null,null,3,1,null,9],
+        [3,6,9,null,null,null,null,8,5],
+        [null,null,null,4,9,null,null,7,null],
+        [5,9,null,null,1,4,null,3,2],
+        [null,4,1,null,null,null,null,null,8],
+        [3,2,null,6,8,null,null,4,5],
+        [null,null,5,9,null,null,null,4,null],
+        [null,1,4,null,3,null,null,5,7],
+        [9,null,null,null,null,null,null,null,null]
+      ]
+    },
+    {
+      "id": "2",
+      "sudoku":[
+        [2,null,null,null,null,null,7,null,1],
+        [null,null,4,8,null,null,9,5,2],
+        [null,null,null,null,4,null,null,8,6],
+        [null,7,6,1,null,null,null,null,9],
+        [2,null,9,null,8,null,null,6,3],
+        [null,null,8,null,9,null,2,null,null],
+        [3,1,4,9,6,null,8,null,2],
+        [7,2,null,1,4,5,null,9,null],
+        [null,null,null,null,null,3,null,null,1]
+      ]
+    },
+    {
+      "id": "3",
+      "sudoku":[
+        [null,2,null,1,null,4,8,6,null],
+        [null,null,null,null,5,null,9,1,null],
+        [null,null,8,null,null,null,null,3,null],
+        [null,1,null,5,9,null,null,4,null],
+        [2,9,null,null,8,1,6,null,null],
+        [8,4,7,2,null,3,1,9,null],
+        [7,5,null,null,null,1,null,3,2],
+        [null,null,null,null,6,null,8,null,null],
+        [null,8,null,9,null,null,4,null,null]
+      ]
+    }
+  ]
+}

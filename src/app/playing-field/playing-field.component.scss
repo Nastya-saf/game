@@ -1,37 +1,47 @@
+@import 'src/toolbar-global.scss';
 
-//TODO: нужно делать на гридах
 .square {
-    border: 1px solid royalblue;
-    // flex-basis: auto;
+    border: 1px solid gray;
     display: grid;
     grid-template-columns: repeat(3,1fr);
     grid-template-rows: repeat(3,1fr);
+    height: 100%;
     &-general {
         width: 100vw;
         height: 100vw;
-        border: 2px solid rgb(5, 131, 33);
     }
-}
-
-ion-input{
-    width: 100%;
-    border: 1px solid red;
-    height: 100%;
-    // width: 5px;
-    // height: 5px;
-}
-
-// .height{
-//     height: 80%;
-// }
-.sc-ion-input-md-h{
-    padding: 0;
 }
 
 input{
     width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    border: none;
+    border: 1px solid gray;
+    
+    &:active, &:hover, &:focus {
+        outline: 0;
+        outline-offset: 0;
+        border: none;
+    }
+}
+
+.no-border{
+    border: none !important;
+    background-color: red;
 }
 
 .note{
-    border: 1ps solid rgb(255, 0, 200);
+    font-size: 7px;
+}
+
+.readonly{
+    background-color: rgb(219, 235, 235);
+}
+
+.buttons{
+    display: flex;
+    justify-content: space-evenly;
 }

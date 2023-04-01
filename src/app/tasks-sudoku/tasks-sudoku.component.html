@@ -1,18 +1,50 @@
-<ion-content >
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-back-button [defaultHref]="defaultHref"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      Задания
+    </ion-title>
+    <ion-progress-bar type="indeterminate" *ngIf="!listTasks"></ion-progress-bar>
+  </ion-toolbar>
+</ion-header>
 
-      <ion-title size="large">tasks-sudoku</ion-title>
-      bestTime: {{listTasks.bestTime}}
-    <div *ngFor="let task of listTasks.tasks">      
-      <ion-button  id="click-trigger">{{task.status}}</ion-button>
-      <ion-popover trigger="click-trigger" triggerAction="click" >
-        <ng-template>
-          <ion-content class="ion-padding">            
-            <div>bestTime:{{task.bestTime}}</div>
-            <div>status:{{task.status}}</div>
-            <ion-button  (click)="setTask(task.idTask)">Играть</ion-button>
-          </ion-content>
-        </ng-template>
-      </ion-popover>
-    </div>
+<ion-content *ngIf="listTasks">
+      <div  class="list-tasks">
+        <div *ngFor="let task of listTasks.tasks"  class="list-tasks__item" (click)="presentPopover(task.idTask,$event)">          
+            <ng-container [ngSwitch]="task.status">
+              <ng-template [ngSwitchCase]="ListStatusTasks.new">
+                <ion-icon name="ellipse" size="large" color="primary"></ion-icon>                
+              </ng-template>
+              <ng-template [ngSwitchCase]="ListStatusTasks.pause">                
+                <ion-icon name="contrast" size="large" class="color-pause"></ion-icon>
+              </ng-template>
+              <ng-template [ngSwitchCase]="ListStatusTasks.finished">                
+                <ion-icon name="checkmark-circle" size="large" class="color-finished"></ion-icon>
+              </ng-template>              
+            </ng-container>          
+        </div>
+      </div>
 
+    <ion-popover #popover [isOpen]="isOpen" (didDismiss)="isOpen = false">
+      <ng-template>
+        <ion-content class="ion-padding">                      
+          <div class="padding-title">
+            <ng-container [ngSwitch]="taskPopover.status">
+              <ng-template [ngSwitchCase]="ListStatusTasks.new">
+                <span>Новый</span>
+              </ng-template>
+              <ng-template [ngSwitchCase]="ListStatusTasks.pause">                
+                <span class="color-pause">Пауза</span>
+              </ng-template>
+              <ng-template [ngSwitchCase]="ListStatusTasks.finished">                
+                <span class="color-finished">Закончен</span>
+              </ng-template>
+            </ng-container>
+          </div>
+          <ion-button  (click)="setTask(taskPopover.idTask)">Играть</ion-button>
+        </ion-content>
+      </ng-template>
+    </ion-popover>
 </ion-content>

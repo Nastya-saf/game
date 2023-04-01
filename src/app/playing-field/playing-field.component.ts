@@ -1,8 +1,13 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
-import { AlertButton, AlertController, PopoverController } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
+import { AlertButton, AlertController, NavParams, PopoverController } from '@ionic/angular';
 import { Event } from 'ionicons/dist/types/stencil-public-runtime';
-// import { GamepadComponent } from '../list-of-levels/list-of-levels.component';
+import { SudokuService } from '../service/sudoku.service';
+import { forkJoin} from 'rxjs';
+import { TaskSudoku } from '../interface/sudoku.interface';
+import { Task, TaskLevels } from '../interface/tasks.interface';
+import { ListStatusTasks } from '../interface/list-status-tasks.enum';
 
 @Component({
   selector: 'playing-field',
@@ -27,92 +32,46 @@ export class PlayingFieldComponent implements OnDestroy,OnInit {
   ]
 
   form : FormGroup;
-  // gamepad - компонент с кнопками
-  //playing-field
 
-  public isNote=false;
-  public isDelete=false;
-  public isClue=false;
+  private _isNote=false;
+  public _isDelete=false;
+  public _isClue=false;
+  public _isDeleteNote=false;
 
-  constructor(public popoverController: PopoverController,private alertController: AlertController) {
+  public set isNote(value:boolean){
+    this.resetButton();
+    this._isNote=value;
+  }
+  public set isDelete(value:boolean){
+    this.resetButton();
+    this._isDelete=value;
+  }
+  public set isClue(value:boolean){
+    this.resetButton();
+    this._isClue=value;
+  }
+  public set isDeleteNote(value:boolean){
+    this.resetButton();
+    this._isDeleteNote=value;
+  }
+
+  constructor(public popoverController: PopoverController,private alertController: AlertController,public navParams: NavParams, private activatedRoute: ActivatedRoute,private sudokuService:SudokuService) {
     this.form = new FormGroup({
       "sudoky": new FormArray([
       ])
     });
-
-    this.array.forEach((item,index)=>{
-      (this.form.controls.sudoky as FormArray).push(this.setFormArrayWithNineControls(item));
-      
-    })
-    console.log('array: ',this.form)
-    // заполнение
-    this.getFormsControlsItem(0)[0].setValue(77);
-    for(let i=0;i<9;i++){
-      for(let j=0;j<9;j++){
-        this.getFormsControlsItem(i)[j].setValue(77);
-      }
-    }
-
-    //создание пометки
-    console.log('создание пометки');
-    this.getFormsControlsItem(0)[0]=this.setFormArrayWithNineControls([null,null,3,null,null,null,null,null,null,]);
-    console.log('this.getFormsControlsItem(0)[0]: ',this.getFormsControlsItem(0)[0]);
-    // (this.getFormsControlsItem(0)[0]as FormArray).controls[3].setValue(5);
-    // this.getFormsArray(this.getFormsControlsItem(0)[0])[0].setValue(5);
-    console.log('-----------------------');
-    console.log('this.form',this.form);
-
-    
-    // запись/сохраение
-    const saveArr=[[],[],[],[],[],[],[],[],[]];
-    console.log('START saveArr: ',saveArr);
-    for(let i=0;i<9;i++){
-      for(let j=0;j<9;j++){
-        saveArr[i][j]= this.getFormsControlsItem(i)[j].value;
-      }
-    }
-    console.log('END saveArr: ',saveArr);
   }
-
-
-  // async presentPopover(e: Event) {
-  //   const popover = await this.popoverController.create({
-  //     component: GamepadComponent,
-  //     event: e,
-  //   });
-
-  //   await popover.present();
-
-  //   const { role } = await popover.onDidDismiss();
-  //   // this.roleMsg = `Popover dismissed with role: ${role}`;
-  // }
 
   public arrayNumber= [1,2,3,4,5,6,7,8,9];
 
-  // async presentAlert() {
-  //   const buttons:AlertButton[]=this.arrayNumber.map(item=>({
-  //     text: `${item}`,
-  //     // role: 'cancel',
-  //     handler: () => {
-  //       console.log('handler');
-  //       this.setValue(item);
-  //       // this.handlerMessage = 'Alert canceled';
-  //     },
-  //   }));
+  private resetButton():void{    
+    this._isNote=false;
+    this._isDelete=false;
+    this._isClue=false;
+    this._isDeleteNote=false;
+  }
 
-  //   const alert = await this.alertController.create({
-  //     header: 'Alert!',
-  //     buttons: buttons,
-  //   });
-
-  //   await alert.present();
-
-  //   // const { role } = await alert.onDidDismiss();
-  //   // this.roleMessage = `Dismissed with role: ${role}`;
-  // }
-
-  public clickButton(num):void{
-    console.log('num: ',num);
+  public clickButton(num):void{    
     this.isOpen = false;
     this.setValue(num);
   }
@@ -128,59 +87,40 @@ export class PlayingFieldComponent implements OnDestroy,OnInit {
   }
 
   private setValue(value):void{
-    if(this.isNote){
+    if(this._isNote){
       // заметка
-      this.isNote=false;
-      // this.note(index);
-      const arr=(new Array(9)).fill(null);
-      console.log('value: ',value);
-      console.log('this.clickIndex[2]: ',this.clickIndex);
-      arr[this.clickIndex[0]]=value;
-      console.log('arr: ',arr);
-      // [null,null,3,null,null,null,null,null,null,]
-      // this.getFormsControlsItem(this.clickIndex[0])[this.clickIndex[1]]=this.setFormArrayWithNineControls(arr); 
+      const arr=(new Array(9)).fill(null);      
+      arr[this.clickIndex[0]]=value;      
       this.getFormsArray(this.getFormsArray()[this.clickIndex[0]])[this.clickIndex[1]]=this.setFormArrayWithNineControls(arr); 
       return;
     }else{
-      if(this.clickIndex.length===3){
-        console.log('delete length==3');
-        // const item=this.getFormsControlsItem(this.clickIndex[0]);
-        // [this.clickIndex[1]];
-        // if(this.isControl(item)){
-          
-        // }
-
-
+      if(this.clickIndex.length===3 && !this._isDeleteNote){        
         // TODO: заменить вот это вот на отдельные функции для основного элемента и для заметки :)
         this.getFormsArray(this.getFormsArray(this.getFormsArray()[this.clickIndex[0]])[this.clickIndex[1]])[this.clickIndex[2]].setValue(value);
-        // this.getFormsArray(item)[this.clickIndex[2]].setValue(value);
-      }else{
-        console.log('delete length!=3');
-        // this.getFormsControlsItem(this.clickIndex[0])[this.clickIndex[1]].setValue(value);
-        console.log('getFormsArray: ',this.getFormsArray(this.clickIndex[0]))
+      }else{        
+        if(!this.isControl(this.getFormsArray(this.getFormsArray()[this.clickIndex[0]])[this.clickIndex[1]])){
+          this.getFormsArray(this.getFormsArray()[this.clickIndex[0]])[this.clickIndex[1]]=new FormControl();
+        }
+
         this.getFormsArray(this.getFormsArray()[this.clickIndex[0]])[this.clickIndex[1]].setValue(value);
       }
     }
     this.clickIndex=[];
+    this.resetButton();
   }
 
-  public clickField(index:number[],e=null){
-    console.log('clickField index: ',index);
-    // if(this.isNote){
-    //   // заметка
-    //   // this.isNote=false;
-    //   // this.note(index);
-    //   this.clickIndex=index;
-    //   this.presentPopover(e);
-    //   return;
-    // }
-    if(this.isDelete){
+  public clickField(index:number[],e=null){    
+    if(this.getReadonly(index[0],index[1])){
+      return;
+    }
+    
+    if(this._isDelete){
       // Удалить
       this.isDelete=false;
       this.delete(index);
       return;
     }
-    if(this.isClue){
+    if(this._isClue){
       // Подсказка
       this.isClue=false;
       this.clue(index);
@@ -196,26 +136,22 @@ export class PlayingFieldComponent implements OnDestroy,OnInit {
   }
 
   public delete(index:number[]):void{
-    if(index.length===3){
-      console.log('delete length==3');
-      // this.getFormsControlsItem(index[0])[index[1]][index[2]].setValue(null);
+    if(index.length===3){      
       this.getFormsArray(this.getFormsArray(this.getFormsArray()[index[0]])[index[1]])[index[2]].setValue(null)
-    }else{
-      console.log('delete length!=3');
+    }else{      
       this.getFormsControlsItem(index[0])[index[1]].setValue(null);
     }
 
   }
 
-  public clue(index:number[]):void{
-    console.log('clue');
+  public clue(index:number[]):void{    
+    this.clickIndex=index;
+    this.setValue(this.answer[index[0]][index[1]]);
   }
 
   private setFormArrayWithNineControls(arrayValues:Array<number>=new Array(9)):FormArray{
-    // console.log('arrayValues: ',arrayValues);
     const newArray=new FormArray([]);
-    arrayValues.forEach((item,index)=>{
-      // console.log('item:',item);
+    arrayValues.forEach((item,index)=>{      
       (newArray as FormArray).push(new FormControl(item));
       (newArray as FormArray).controls[index].valueChanges.subscribe(value=>{
       })
@@ -223,13 +159,11 @@ export class PlayingFieldComponent implements OnDestroy,OnInit {
     return newArray;
   }
 
- public getFormsControlsSudoky() : AbstractControl[]{
-    // console.log('getFormsControlsSudoky');
+ public getFormsControlsSudoky() : AbstractControl[]{    
     return (this.form.controls.sudoky as FormArray)?.controls;
   }
 
-  public getFormsControlsItem(index:number) : AbstractControl[]{
-    // console.log('getFormsControlsItem index:',index);
+  public getFormsControlsItem(index:number) : AbstractControl[]{    
     return (this.getFormsControlsSudoky()[index] as FormArray)?.controls;
   }
 
@@ -240,13 +174,95 @@ export class PlayingFieldComponent implements OnDestroy,OnInit {
   public isControl(item:AbstractControl):boolean{
     return !(item instanceof FormArray);
   }
+
+  public task:any[][];
+  public answer:any[][];
+  public solution:any[][];
+  private idLevel;
+  private taskLevels:Task;
+
+  public get defaultHref():string{    
+    return `/tasks/${this.idLevel}`;
+  }
   
-  public ngOnInit(){
-    console.log('OnInit');
+  public ngOnInit(){    
+    this.idLevel=this.activatedRoute.snapshot.paramMap.get('idLevel');
+    const idTask=this.activatedRoute.snapshot.paramMap.get('idTask');
+    this.sudokuService.getListTaskByIdLevel(this.idLevel).subscribe(value=>{
+      this.taskLevels=value.tasks.find(task=>task.idTask===idTask);
+      forkJoin(
+        this.sudokuService.getTaskByIdLevelAndIdTask(this.idLevel,this.taskLevels.idTask),
+        this.sudokuService.getAnswerByIdLevelAndIdTask(this.idLevel,this.taskLevels.idAnswer),
+        this.sudokuService.getSolutionByIdLevelAndIdTask(this.idLevel,this.taskLevels.idSolution)
+      ).subscribe(tasks=>{
+        this.task=tasks[0]?.sudoku;
+        this.answer=tasks[1]?.sudoku;
+        this.solution=tasks[2]?.sudoku;        
+        this.fillingFields();
+      })
+    })
   }
 
-  public ngOnDestroy(){
-    console.log('ngOnDestroy');
+  private fillingFields():void{    
+    this.task.forEach((item)=>{
+      (this.form.controls.sudoky as FormArray).push(this.setFormArrayWithNineControls(item));
+    });
+    if(this.solution){
+      this.solution.forEach((item,i)=>{
+        item.forEach((value,j)=>{
+          if(value && typeof value==='object'){            
+            this.getFormsControlsItem(i)[j]=(this.setFormArrayWithNineControls(value));
+          }
+          else{
+            this.clickIndex=[i,j];
+            this.setValue(value);
+          }
+        })
+      })
+    }
+  }
+
+  public getReadonly(i,j):boolean{
+    return !!this.task[i][j];
+  }
+
+  public ngOnDestroy(){    
+    this.save();
+  }
+
+  private save():void{    
+    const solution=this.getCurrentSolution();    
+    this.taskLevels.status=this.getStatusTasks();    
+    if(this.taskLevels.status!==ListStatusTasks.new){
+      this.sudokuService.setSolution(this.idLevel,this.taskLevels, solution)
+    }
+ 
+  }
+
+  private getCurrentSolution():number[][]{
+    const solution=[[],[],[],[],[],[],[],[],[]];    
+    for(let i=0;i<9;i++){
+      for(let j=0;j<9;j++){
+        solution[i][j]= this.getFormsControlsItem(i)[j].value;
+      }
+    }
+    return solution;
+  }
+
+  private checkSolution():boolean{
+    const solution=this.getCurrentSolution();    
+    return JSON.stringify(solution) === JSON.stringify(this.answer);
+  }
+
+  private getStatusTasks():ListStatusTasks{
+    const solution=this.getCurrentSolution();
+    if(JSON.stringify(solution) === JSON.stringify(this.answer)){
+      return ListStatusTasks.finished
+    }
+    if(JSON.stringify(solution) === JSON.stringify(this.task)){
+      return ListStatusTasks.new
+    }
+    return ListStatusTasks.pause;
   }
 
 }
