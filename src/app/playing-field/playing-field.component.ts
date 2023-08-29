@@ -87,17 +87,17 @@ export class PlayingFieldComponent implements OnDestroy,OnInit {
   }
 
   private setValue(value):void{
-    if(this._isNote){
+    if(this._isNote && this.clickIndex.length!==3){
       // заметка
       const arr=(new Array(9)).fill(null);      
       arr[this.clickIndex[0]]=value;      
       this.getFormsArray(this.getFormsArray()[this.clickIndex[0]])[this.clickIndex[1]]=this.setFormArrayWithNineControls(arr); 
       return;
     }else{
-      if(this.clickIndex.length===3 && !this._isDeleteNote){        
+      if(this.clickIndex.length===3 && !this._isDeleteNote){
         // TODO: заменить вот это вот на отдельные функции для основного элемента и для заметки :)
         this.getFormsArray(this.getFormsArray(this.getFormsArray()[this.clickIndex[0]])[this.clickIndex[1]])[this.clickIndex[2]].setValue(value);
-      }else{        
+      }else{    
         if(!this.isControl(this.getFormsArray(this.getFormsArray()[this.clickIndex[0]])[this.clickIndex[1]])){
           this.getFormsArray(this.getFormsArray()[this.clickIndex[0]])[this.clickIndex[1]]=new FormControl();
         }
